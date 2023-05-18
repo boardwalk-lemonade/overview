@@ -1,0 +1,19 @@
+# This file describes a Pod Security Policy applicable to general use.
+# For a better, more locked down version, see
+# https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/restricted-psp.yaml
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: default-psp
+
+spec:
+  # Prevent running as root, or with Capabilities
+  privileged: false
+  runAsUser:
+    rule: MustRunAsNonRoot
+  allowPrivilegeEscalation: false
+  forbiddenSysctls: *
+  # This helps prevent escalation attacks by denying attackers the ability to download scripts or modify configuration/executables.
+  readOnlyRootFilesystem: true
+  # An empty list here allows all volume types. There is some 
+  volumes: []

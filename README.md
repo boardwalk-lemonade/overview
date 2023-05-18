@@ -1,52 +1,106 @@
+```
+Copyright 2019 Eastside Kubernetes Workshop
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+
+See: https://gitlab.com/eastside-kubernetes-workshop/overview/blob/master/LICENSE
+```
+
 # Overview
-This project is a learning project and demonstration of several technologies
-for building cloud native applications in a DevOps manner. The application
-under development is not overly complex but service to illustrate some
-interesting issues with layered services, monitoring and with reactive
-web design. 
 
-# Subject Application 
-The subject application simulates a lemonade stand serving thirsty customers 
-at a beach-front boardwalk kiosk on a hot day at the beach using services 
-that provide lemonade, ice tea, ice cubes and cups.
+This project describes all the projects in the Workshop Lemonade Demo group. 
+This group is a part of the demonstration and tinkering code used in the
+Eastside Kubernetes Workshop (See: https://gitlab.com/eastside-kubernetes-workshop)
 
-The sketch of the design looks like this:  
-![lemonade-sketch.PNG](lemonade-sketch.PNG)  
+Together, these projects demostrate a first, mostly real applicaiton service
+ecosystem deployed on a Kubernetes cluster. It demos the following:
 
-This sketch is hard to read, and will be replaced with a better diagram, but 
-we don't want to lose the mojo for now.
+* A very simple application made up of three services
+* Deployment files for Kubernetes
+* CI/CD using GitLab Runners
+* Building and deploying Docker artifacts
 
-# Components
-The application consists of a UI which will show the product (virtual product,
-lemonade or ice tea with ice cubes in cups) being produced. This UI will be
-continuously updated showing the produced product.
+The sample application is designed to be dead-bang simple so we concentrate
+on the Kuberentes scaffolding and not 
+[12 factor application design patterns](https://12factor.net/).
 
-The UI service connects to the back end barista / assembly service. This service
-assembles the final (virtual) product from the component services. This service
-requests the individual pieces used to build the serving of delicious beverage. 
-It is envision the serving will be delivered in a cup from the cup componet service. 
-The cup is filled with a beverage, either lemonade or ice tea, from one or
-more beverage comoponet services. I.e. an Arnold Palmer beverage could be
-created by requesting a half serving of lemonade and ice tea. Finally, since
-the beverage is to be consume on a hot day on the beach boardwalk, a cup is
-obtained from the cup component service. 
+# The System
 
-It imagined that the the component services will have details about how much
-product they hold, and when providing product upstream will decrment the inventory.
-If the inventory drops to zero, the services cannot deliver product. So there is
-a replenishment service which will provide new inventory to the component
-service. In some cases, the replishment is very quick, putting cups on a
-shelf. In some cases, brewing a new pot of tea, the replenishment may take
-some time. This may necessitate that the system run two ice tea services
-(not like a distributed service, but like a second brewing station for 
-product.)
+The Lemonade Demo is a set of microservices which "serve" 
+virtual servings of lemonade or other beverages. The servings
+are really just JSON messages passed back to a front end
+(which is optional, for simplicity). The system application
+diagram:
 
-# Technical Details
-The initial MVP be delivered quickly, but will be modified incrementally 
-to include distributed tracing so that difficulties in the system operation
-can be quickly traced to the root cause. In systems with complex service
-dependencies, failures in one component can be hard to find. This exmaple
-is not overly complex, but interesting enough to explore how business
-metrics (inventory, sales), technical metrics (cpu, memory) and 
-instrumentation/tracing work together.
+![Demo Application Architecture](LemonadeDemoApplicationArchitecture.png)
+
+# Tools you might need
+
+The code and steps for code wrangling are found in the
+[`GettingStarted.md`](GettingStarted.md) document.
+
+# The Basic Demonstration
+
+The following are steps for walking through the demonstration
+
+## Create a group to hold the projects
+
+This demonstration uses several repositories for different
+pieces. This project is a poly-repo or multi-repo approach to
+microservices. (The other approach woudl be a mono-repo).
+
+On the GitLab top menu click on `Groups`, then choose `Your Groups`.
+Next, on the right hand side should be a green button for `New Group`.
+Fill in the information and click on `Create Group`
+
+## Fork the Cup Supply service to your GitLab account
+
+Eventully you will fork/copy all four (five, if you include this
+Overview project) to the new group in your account. 
+
+Start with the `cup-supply` serivce. For directions see the
+[`ForkCupSupply.md`](ForkCupSupply.md) document.
+
+## Create a Kubernetes cluster and setup the namespace
+
+Create a cluster on your favorite cloud provider. A default cluster provided
+by Google or Azure will work. These probably default to 3 small nodes, and
+that enough for the demo. This default costs about $3 per day, way less if 
+you only run it for the few hours to walk through this demo.
+
+For instructions see the [`ClusterSetup.md`](ClusterSetup.md)  document.
+
+## Setup Secrets so that Cup Supply will deploy
+
+When you forked CupSupply, GitLab's CI/CD tool ran, built and packaged your
+project. But it should have failed the deploy step. By setting the 
+Cluster Secrets in GitLab CI/CD varaibles we can allow this deployment 
+to succeed.
+
+For instructions see the [`DeployCupSupply.md`](DeployCupSupply.md) document.
+
+## Fork and Deploy Lemonade Service
+
+Yep, cups need to be filled with something refreshing. This service is the 
+source of that virtual tasty lemonade.
+
+For instructions see the [`DeployLemonadeSupply.md`](DeployLemonadeSupply.md) document.
+
+## Fork and Deploy the Beverage Service
+
+The Beverage service completes the service ecosystem.
+
+For instructions see the [`DeployBeverageService.md`](DeployBeverageService.md) document.
+
+## Deploy Promethesus for monitoring
+
+If you are responsible for a system, you must have monitoring. Setting up
+Prometheus is can be pretty straight forward, even if there is a list
+of details to attend to.
+
+For instructions see the [`InstallPrometheus.md`](InstallPrometheus.md)
+document.
+
+
 
